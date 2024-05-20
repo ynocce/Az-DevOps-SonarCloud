@@ -1,0 +1,52 @@
+trigger: none
+
+pool:
+  vmImage: windows-latest
+
+stages:
+  - stage:
+    jobs:
+      - job: Build_and_Sonar
+        steps:
+
+          # - task: SonarCloudPrepare@1
+          #   inputs:
+          #     SonarCloud: 'sonarcloud'
+          #     organization: 'azure-devops-labtest'
+          #     scannerMode: 'MSBuild'
+          #     projectKey: 'sonar-net'
+          #     projectName: 'sonar-net'
+
+          - task: NuGetToolInstaller@0
+            displayName: Use NuGet 4.4.1
+            inputs:
+              versionSpec: 4.4.1
+          - task: DotNetCoreCLI@2
+            displayName: dotnet restore
+            inputs:
+              command: restore
+              projects: '**\*.sln'
+          - task: VSBuild@1
+            displayName: Build solution
+            inputs:
+              solution: '**\*.sln'
+              msbuildArgs: /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"
+              platform: $(BuildPlatform)
+              configuration: $(BuildConfiguration)
+
+          # - task: SonarCloudAnalyze@1
+          #   inputs:
+          #     jdkversion: 'JAVA_HOME_17_X64'
+
+          # - task: SonarCloudPublish@1
+          #   inputs:
+          #     pollingTimeoutSec: '300'
+          
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Artifact
+            inputs:
+              PathtoPublish: $(build.artifactstagingdirectory)
+              ArtifactName: drop
+              TargetPath: '\\my\share\$(Build.DefinitionName)\$(Build.BuildNumber)'
+
+
