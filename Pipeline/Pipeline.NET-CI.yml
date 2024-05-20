@@ -1,5 +1,9 @@
 trigger: none
 
+variables:
+  BuildConfiguration: release
+  BuildPlatform: any cpu
+  
 pool:
   vmImage: windows-latest
 
@@ -26,13 +30,20 @@ stages:
             inputs:
               command: restore
               projects: '**\*.sln'
+          
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: 'test'
+              projects: '**\*.sln'
+              publishTestResults: false
+          
           - task: VSBuild@1
             displayName: Build solution
             inputs:
               solution: '**\*.sln'
-              msbuildArgs: /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"
-              platform: $(BuildPlatform)
-              configuration: $(BuildConfiguration)
+              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
+              platform: '$(BuildPlatform)'
+              configuration: '$(BuildConfiguration)'
 
           # - task: SonarCloudAnalyze@1
           #   inputs:
@@ -41,12 +52,15 @@ stages:
           # - task: SonarCloudPublish@1
           #   inputs:
           #     pollingTimeoutSec: '300'
+          - task: PublishSymbols@2
+            displayName: 'Publish symbols path'
+            inputs:
+              SearchPattern: '**\bin\**\*.pdb'
+              PublishSymbols: false
           
           - task: PublishBuildArtifacts@1
-            displayName: Publish Artifact
+            displayName: 'Publish Artifact'
             inputs:
-              PathtoPublish: $(build.artifactstagingdirectory)
-              ArtifactName: drop
-              TargetPath: '\\my\share\$(Build.DefinitionName)\$(Build.BuildNumber)'
-
-
+              PathtoPublish: '$(build.artifactstagingdirectory)'
+              ArtifactName: 'Drop'
+            condition: succeededOrFailed()
