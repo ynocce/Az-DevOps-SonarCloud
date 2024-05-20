@@ -18,7 +18,7 @@ stages:
               SonarCloud: 'sonarcloud'
               organization: 'ynocce'
               scannerMode: 'MSBuild'
-              projectKey: 'ynocce_sonar-dotnet'
+              projectKey: 'ynocce_Az-DevOps-SonarCloud'
               projectName: 'Sonar-Dotnet'
 
           - task: NuGetToolInstaller@0
