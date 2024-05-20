@@ -102,4 +102,4 @@ Esse tutorial tem como objetivo implementar o SonarCloud em uma pipeline Yaml .N
 
 Prontinho! agora só corrigir as falhas do seu código e sempre faça sua analise.
 
-Qualquer dúvida ou sujestão só informar.
+Qualquer dúvida ou sugestão só informar.
