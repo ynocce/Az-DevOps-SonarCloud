@@ -2,9 +2,9 @@
 
 Esse tutorial tem como objetivo implementar o SonarCloud em uma pipeline Yaml .NET  no Azure DevOps, usando:
 
-- **GitHub**
-- **Azure Pipelines**
-- **SonarCloud**
+- GitHub
+- Azure Pipelines
+- SonarCloud
 
 - **Criando uma Pipeline yaml .NET no Azure DevOps:**
     - A Pipeline Yaml utilizada está no repos do GitHub.
